@@ -97,7 +97,7 @@ public class DemoResource {
         return cachedResponse;
     }
     
-    @Path("setUpUsers")
+    @Path("setupusers")
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public void setUpUsers() {

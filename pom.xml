@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>dat.sem3</groupId>
-    <artifactId>ca3_backend</artifactId>
+    <artifactId>ca2_backend_eksamen</artifactId>
     <version>1.0.1</version>
     <packaging>war</packaging>
 
-    <name>CA3_backend</name>
+    <name>CA2_backend_eksamen</name>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
