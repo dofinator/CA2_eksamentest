@@ -1,8 +1,10 @@
 package facades;
 
 import dto.UserDTO;
+import entities.Hobby;
 import entities.User;
 import errorhandling.PersonNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -52,9 +54,9 @@ public class UserFacade implements utils.UserFacadeInterface {
     public UserDTO getUserByPhone(String phone) throws PersonNotFoundException {
         EntityManager em = emf.createEntityManager();
         try {
-            Query q1 = em.createQuery("SELECT u FROM User u WHERE u.phone = :phone", User.class);
-            q1.setParameter("phone", phone);
-            User user = (User) q1.getSingleResult();
+            Query query = em.createQuery("SELECT u FROM User u WHERE u.phone = :phone", User.class);
+            query.setParameter("phone", phone);
+            User user = (User) query.getSingleResult();
             if (user.getfName() == null) {
                 throw new PersonNotFoundException("No person with given phone number exist");
             }
@@ -67,12 +69,37 @@ public class UserFacade implements utils.UserFacadeInterface {
 
     @Override
     public List<UserDTO> getAllUsersByHobby(String hobby) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        EntityManager em = emf.createEntityManager();
+        try {
+            Query query = em.createQuery("SELECT u FROM User u JOIN u.hobbies h WHERE h.name = :hobby", User.class);
+            query.setParameter("hobby", hobby);
+            List<User> userList = query.getResultList();
+            List<UserDTO> userDTOlist = new ArrayList();
+            for (User user : userList) {
+                userDTOlist.add(new UserDTO(user));
+            }
+            return userDTOlist;
+        } finally {
+            em.close();
+
+        }
     }
 
     @Override
     public List<UserDTO> getAllUsersByCity(String city) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        EntityManager em = emf.createEntityManager();
+        try {
+            Query query = em.createQuery("SELECT u FROM User u JOIN u.address.cityInfo c WHERE c.city = :city", UserDTO.class);
+            query.setParameter("city", city);
+            List<User> userList = query.getResultList();
+            List<UserDTO> userDTOlist = new ArrayList();
+            for (User user : userList) {
+                userDTOlist.add(new UserDTO(user));
+            }
+            return userDTOlist;
+        } finally {
+            em.close();
+        }
     }
 
     @Override

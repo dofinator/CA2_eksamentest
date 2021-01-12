@@ -8,6 +8,7 @@ import utils.EMF_Creator;
 import entities.Role;
 import entities.User;
 import errorhandling.PersonNotFoundException;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterAll;
@@ -119,15 +120,29 @@ public class FacadeExampleTest {
 
     // TODO: Delete or change this method 
     @Test
-    public void testVerifyUser() throws AuthenticationException {
+    public void verifyUser() throws AuthenticationException {
         User user = facade.getVeryfiedUser("test2", "test2");
         assertEquals("test2", admin.getUserName());
     }
 
     @Test
-    public void testUserByPhone() throws PersonNotFoundException {
+    public void userByPhone() throws PersonNotFoundException {
         UserDTO u = facade.getUserByPhone("45142241");
         String expectedfName = "fName1";
         assertEquals(expectedfName, u.fName);
+    }
+    
+    @Test
+    public void getAllUsersByHobby(){
+        List<UserDTO> allUsers = facade.getAllUsersByHobby("Fodbold");
+        int expectedSize = 2;
+        assertEquals(expectedSize, allUsers.size());
+    }
+    
+    @Test
+    public void getAllUsersByCity(){
+        List<UserDTO> allUsers = facade.getAllUsersByCity("Hillerød");
+        String expectedCity = "Hillerød";
+        assertEquals(expectedCity, allUsers.get(0).city);
     }
 }
