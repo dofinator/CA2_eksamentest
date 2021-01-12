@@ -104,7 +104,13 @@ public class UserFacade implements utils.UserFacadeInterface {
 
     @Override
     public int getUserCountByHobby(String hobby) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        EntityManager em = emf.createEntityManager();
+        try{
+           int count = (Integer)em.createQuery("SELECT COUNT(u) FROM User u").getSingleResult();
+           return count;
+        }finally{
+            em.close();
+        }
     }
 
     @Override
