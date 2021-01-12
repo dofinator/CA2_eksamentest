@@ -46,7 +46,7 @@ public class FacadeExampleTest {
 
     @BeforeAll
     public static void setUpClass() {
-        emf = EMF_Creator.createEntityManagerFactory();
+        emf = EMF_Creator.createEntityManagerFactoryForTest();
         facade = UserFacade.getUserFacade(emf);
         EntityManager em = emf.createEntityManager();
 
