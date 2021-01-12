@@ -1,4 +1,4 @@
-package dto;
+package oldDTO;
 
 public class StarshipDTO {
 

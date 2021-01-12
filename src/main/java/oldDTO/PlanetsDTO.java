@@ -1,4 +1,4 @@
-package dto;
+package oldDTO;
 
 
 //Håndtering af array MED NAVN. Navnet på listen skal have samme navn. 

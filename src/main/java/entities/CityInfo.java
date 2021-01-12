@@ -24,7 +24,7 @@ public class CityInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    private String zip;
+    private long zip;
     private String city;
     
     @OneToMany(mappedBy = "cityInfo")
@@ -33,11 +33,40 @@ public class CityInfo implements Serializable {
     public CityInfo() {
     }
 
-    public CityInfo(String zip, String city) {
+    public CityInfo(long zip, String city) {
         this.zip = zip;
         this.city = city;
         this.addresses = new ArrayList();
     }
+
+    public long getZip() {
+        return zip;
+    }
+
+    public void setZip(long zip) {
+        this.zip = zip;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void addAddress(Address address) {
+        if(address != null){
+            this.addresses.add(address);
+            address.setCityInfo(this);
+        };
+    }
+    
+    
     
     
     

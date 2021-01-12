@@ -1,4 +1,4 @@
-package dto;
+package oldDTO;
 
 
 //Håndtering af array UDEN NAVN. De attributer der skal trækkes SKAL navngives 
