@@ -93,6 +93,14 @@ public class User implements Serializable {
             this.hobbies.add(hobby);
             hobby.getUsers().add(this);
         }
+        
+    }       
+
+    public void deleteHobbies(Hobby hobby) {
+        if (hobby != null) {
+            this.hobbies.remove(hobby);
+            hobby.getUsers().remove(this);
+        }
 
     }
 
@@ -152,7 +160,5 @@ public class User implements Serializable {
     public void addRole(Role userRole) {
         roleList.add(userRole);
     }
-    
-    
 
 }

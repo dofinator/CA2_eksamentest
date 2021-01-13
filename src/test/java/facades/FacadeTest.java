@@ -42,6 +42,8 @@ public class FacadeTest {
 
     private static Hobby h1;
     private static Hobby h2;
+    private static Hobby h3;
+    private static Hobby h4;
 
     public FacadeTest() {
     }
@@ -61,6 +63,8 @@ public class FacadeTest {
 
         h1 = new Hobby("Fodbold");
         h2 = new Hobby("Tennis");
+        h3 = new Hobby("Teasdnnis");
+        h4 = new Hobby("Ten12nis");
 
         try {
             em.getTransaction().begin();
@@ -75,20 +79,22 @@ public class FacadeTest {
             a2.setCityInfo(c1);
             a3.setCityInfo(c2);
 
-            user = new User("test1", "test1", "fName1", "lName1", "45142241");
+            user = new User("user", "test1", "fName1", "lName1", "45142241");
             user.addRole(userRole);
             user.addHobbies(h1);
             user.setAdress(a1);
 
-            admin = new User("test2", "test2", "fName2", "lName2", "45874412");
+            admin = new User("admin", "test2", "fName2", "lName2", "45874412");
             admin.addRole(adminRole);
             admin.addHobbies(h2);
             admin.setAdress(a2);
 
-            both = new User("test3", "test3", "fName3", "lname3", "65887410");
+            both = new User("both", "test3", "fName3", "lname3", "65887410");
             both.addRole(userRole);
             both.addRole(adminRole);
             both.addHobbies(h1);
+            both.addHobbies(h3);
+            both.addHobbies(h4);
             both.setAdress(a3);
 
             em.persist(userRole);
@@ -123,14 +129,14 @@ public class FacadeTest {
     // TODO: Delete or change this method 
     @Test
     public void verifyUser() throws AuthenticationException {
-        User user = facade.getVeryfiedUser("test2", "test2");
-        assertEquals("test2", admin.getUserName());
+        User user = facade.getVeryfiedUser("admin", "test2");
+        assertEquals("admin", admin.getUserName());
     }
 
     @Test
     public void userByPhone() throws PersonNotFoundException {
         UserDTO u = facade.getUserByPhone("45142241");
-        String expectedfName = "fName1";
+        String expectedfName = "testEdit";
         assertEquals(expectedfName, u.fName);
     }
 
@@ -182,5 +188,58 @@ public class FacadeTest {
                 
         assertEquals(expected, userDTO.phone);
        
+    }
+    
+    @Test
+    public void editUser1() throws PersonNotFoundException{
+        
+        user.setfName("testEdit");
+        
+        UserDTO userDTO = facade.editUser(new UserDTO(user));
+        
+        UserDTO user = facade.getUserByPhone("45142241");
+        
+        String expectedFname = "testEdit";
+        
+        assertEquals(expectedFname, userDTO.fName);
+        
+    }
+    
+    @Test
+    public void editUser2() throws PersonNotFoundException{
+        Address a = new Address("Ostegade 2");
+        CityInfo c = new CityInfo(3400, "Hillerød");
+        
+        a.setCityInfo(c);
+        
+        user.setAdress(a);
+        
+        UserDTO userDTO = facade.editUser(new UserDTO(user));
+        
+        assertEquals("Ostegade 2", userDTO.street);
+        
+        
+    }
+    
+    @Test
+    public void addHobby() throws PersonNotFoundException{
+        
+        user.addHobbies(h2);
+        
+        UserDTO userDTO = facade.addHobby(new UserDTO(user));
+        
+        assertEquals(2, userDTO.hobbies.size());
+        
+        
+    }
+    
+    @Test
+    public void deleteHobby() throws PersonNotFoundException{
+               
+        both.deleteHobbies(h3);
+        
+        UserDTO userDTO = facade.deleteHobby(new UserDTO(both));
+        
+        assertEquals(2, userDTO.hobbies.size());
     }
 }
