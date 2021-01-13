@@ -26,18 +26,18 @@ public class Address implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
     private String street;
-    
+
     @OneToMany(mappedBy = "address")
     private List<User> users;
-    
+
     @ManyToOne(cascade = CascadeType.PERSIST)
     private CityInfo cityInfo;
 
     public Address() {
     }
-    
+
     public Address(String street) {
         this.street = street;
         this.users = new ArrayList();
@@ -56,7 +56,7 @@ public class Address implements Serializable {
     }
 
     public void addUsers(User user) {
-        if(user != null){
+        if (user != null) {
             this.users.add(user);
             user.setAdress(this);
         }
@@ -68,19 +68,9 @@ public class Address implements Serializable {
 
     public void setCityInfo(CityInfo cityInfo) {
         this.cityInfo = cityInfo;
-        if(cityInfo != null){
+        if (cityInfo != null) {
             cityInfo.getAddresses().add(this);
         }
     }
-    
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-  
-    
 }

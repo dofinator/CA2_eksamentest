@@ -24,9 +24,9 @@ public class Hobby implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
     private String name;
-    
+
     @ManyToMany
     private List<User> users;
 
@@ -51,21 +51,18 @@ public class Hobby implements Serializable {
     }
 
     public void addUsers(User user) {
-        if(user != null){
+        if (user != null) {
             this.users.add(user);
             user.getHobbies().add(this);
         }
     }
-    
-    
-    public Long getId() {
+
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
- 
-    
 }
