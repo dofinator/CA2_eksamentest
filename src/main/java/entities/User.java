@@ -66,7 +66,7 @@ public class User implements Serializable {
 
     public User(String userName, String userPass, String fName, String lName, String phone) {
         this.userName = userName;
-        this.userPass = userPass;
+        this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt());
         this.fName = fName;
         this.lName = lName;
         this.phone = phone;
@@ -152,5 +152,7 @@ public class User implements Serializable {
     public void addRole(Role userRole) {
         roleList.add(userRole);
     }
+    
+    
 
 }

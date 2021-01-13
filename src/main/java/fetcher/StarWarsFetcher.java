@@ -1,12 +1,12 @@
 package fetcher;
 
 import com.google.gson.Gson;
-import dto.CombinedDTO;
-import dto.PeopleDTO;
-import dto.PlanetDTO;
-import dto.SpeciesDTO;
-import dto.StarshipDTO;
-import dto.VehicleDTO;
+import oldDTO.CombinedDTO;
+import oldDTO.PeopleDTO;
+import oldDTO.PlanetDTO;
+import oldDTO.SpeciesDTO;
+import oldDTO.StarshipDTO;
+import oldDTO.VehicleDTO;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
