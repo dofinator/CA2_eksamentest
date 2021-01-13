@@ -19,10 +19,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import security.errorhandling.AuthenticationException;
+import static org.hamcrest.MatcherAssert.assertThat; 
+import static org.hamcrest.Matchers.*;
 
 //Uncomment the line below, to temporarily disable this test
 //@Disabled
-public class FacadeExampleTest {
+public class FacadeTest {
 
     private static EntityManagerFactory emf;
     private static UserFacade facade;
@@ -41,7 +43,7 @@ public class FacadeExampleTest {
     private static Hobby h1;
     private static Hobby h2;
 
-    public FacadeExampleTest() {
+    public FacadeTest() {
     }
 
     @BeforeAll
@@ -131,18 +133,54 @@ public class FacadeExampleTest {
         String expectedfName = "fName1";
         assertEquals(expectedfName, u.fName);
     }
-    
+
     @Test
-    public void getAllUsersByHobby(){
+    public void getAllUsersByHobby() {
         List<UserDTO> allUsers = facade.getAllUsersByHobby("Fodbold");
         int expectedSize = 2;
         assertEquals(expectedSize, allUsers.size());
     }
-    
+
     @Test
-    public void getAllUsersByCity(){
+    public void getAllUsersByCity() {
         List<UserDTO> allUsers = facade.getAllUsersByCity("Hillerød");
         String expectedCity = "Hillerød";
         assertEquals(expectedCity, allUsers.get(0).city);
+    }
+
+    @Test
+    public void getUserCountByHobby() {
+        long count = facade.getUserCountByHobby("Fodbold");
+        long expCount = 1;
+        assertEquals(expCount, 1);
+    }
+    
+    @Test
+    public void getAllZips(){
+        List<Long> allZips = facade.getAllZipCodes();
+        int expSize = 2;
+        assertEquals(expSize, allZips.size());
+    }
+    
+    @Test
+    public void createUser() throws PersonNotFoundException{
+        
+        User user = new User("create", "create", "createLname", "createFname", "65887451");
+        Address a = new Address("Ostegade 2");
+        CityInfo c = new CityInfo(3400, "Hillerød");
+        Hobby h = new Hobby("Fodbold");
+        
+        a.setCityInfo(c);
+        user.setAdress(a);
+        user.addHobbies(h);
+        
+        UserDTO u = facade.createUSer(new UserDTO(user));
+        
+        UserDTO userDTO = facade.getUserByPhone("65887451");
+        
+        String expected = "65887451";
+                
+        assertEquals(expected, userDTO.phone);
+       
     }
 }

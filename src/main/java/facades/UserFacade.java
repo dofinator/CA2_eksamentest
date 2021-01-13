@@ -1,6 +1,9 @@
 package facades;
 
+import dto.HobbyDTO;
 import dto.UserDTO;
+import entities.Address;
+import entities.CityInfo;
 import entities.Hobby;
 import entities.User;
 import errorhandling.PersonNotFoundException;
@@ -103,24 +106,70 @@ public class UserFacade implements utils.UserFacadeInterface {
     }
 
     @Override
-    public int getUserCountByHobby(String hobby) {
+    public long getUserCountByHobby(String hobby) {
         EntityManager em = emf.createEntityManager();
-        try{
-           int count = (Integer)em.createQuery("SELECT COUNT(u) FROM User u").getSingleResult();
-           return count;
-        }finally{
+        try {
+            Query query = em.createQuery("SELECT COUNT(u) FROM User u JOIN u.hobbies h WHERE h.name = :hobby", User.class);
+            query.setParameter("hobby", hobby);
+            long count = (long) query.getSingleResult();
+            return count;
+        } finally {
             em.close();
         }
     }
 
     @Override
     public List<Long> getAllZipCodes() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        EntityManager em = emf.createEntityManager();
+        try {
+            Query query = em.createQuery("SELECT c FROM CityInfo c", CityInfo.class);
+            List<CityInfo> cityInfos = query.getResultList();
+            List<Long> allZips = new ArrayList();
+            for (CityInfo c : cityInfos) {
+                allZips.add(c.getZip());
+            }
+            return allZips;
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public UserDTO createUSer(UserDTO userDTO) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        EntityManager em = emf.createEntityManager();
+
+        User user = new User(userDTO.userName, userDTO.userPass, userDTO.fName, userDTO.lName, userDTO.phone);
+
+        Query q1 = em.createQuery("SELECT a FROM Address a WHERE a.street = :street", Address.class);
+        q1.setParameter("street", userDTO.street);
+        Address address = (Address) q1.getSingleResult();
+        if (address == null) {
+            address = new Address(userDTO.street);
+        }
+        user.setAdress(address);
+
+        CityInfo cityInfo = em.find(CityInfo.class, userDTO.zip);
+        if (cityInfo == null) {
+            cityInfo = new CityInfo(userDTO.zip, userDTO.city);
+        }
+        address.setCityInfo(cityInfo);
+
+        for (HobbyDTO hobby : userDTO.hobbies) {
+            Query q2 = em.createQuery("SELECT h FROM Hobby h WHERE h.name = :hobby", Hobby.class); 
+            q2.setParameter("hobby", hobby.name);
+            Hobby h = (Hobby) q2.getSingleResult();
+            if(h == null){
+                h = new Hobby(hobby.name);
+            }
+            user.addHobbies(h);
+        }
+
+        em.getTransaction().begin();
+        em.persist(user);
+        em.getTransaction().commit();
+
+        return new UserDTO(user);
     }
 
     @Override
@@ -132,5 +181,7 @@ public class UserFacade implements utils.UserFacadeInterface {
     public UserDTO deleteUser(String userName) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+   
 
 }

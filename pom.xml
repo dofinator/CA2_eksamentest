@@ -39,7 +39,11 @@
             <artifactId>jaxrs-ri</artifactId>
             <version>2.32</version>
         </dependency>
-               
+        <dependency>
+            <groupId>at.meks</groupId>
+            <artifactId>hamcrest-matchers</artifactId>
+            <version>0.1.1</version>
+        </dependency>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>

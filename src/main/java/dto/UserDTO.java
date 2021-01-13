@@ -8,6 +8,7 @@ import java.util.List;
 public class UserDTO {
 
     public String userName;
+    public String userPass;
     public String fName;
     public String lName;
     public String phone;
@@ -18,6 +19,7 @@ public class UserDTO {
 
     public UserDTO(User user) {
         this.userName = user.getUserName();
+        this.userPass = user.getUserPass();
         this.fName = user.getfName();
         this.lName = user.getlName();
         this.phone = user.getPhone();
