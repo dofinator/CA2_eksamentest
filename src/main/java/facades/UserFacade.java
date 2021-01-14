@@ -8,9 +8,7 @@ import entities.Hobby;
 import entities.User;
 import errorhandling.PersonNotFoundException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
@@ -25,7 +23,7 @@ public class UserFacade implements utils.UserFacadeInterface {
     private static EntityManagerFactory emf;
     private static UserFacade instance;
 
-    public UserFacade() {
+    private UserFacade() {
     }
 
     /**
@@ -58,10 +56,17 @@ public class UserFacade implements utils.UserFacadeInterface {
     @Override
     public UserDTO getUserByPhone(String phone) throws PersonNotFoundException {
         EntityManager em = emf.createEntityManager();
+        User user;
         try {
-            Query query = em.createQuery("SELECT u FROM User u WHERE u.phone = :phone", User.class);
-            query.setParameter("phone", phone);
-            User user = (User) query.getSingleResult();
+            try {
+
+                Query query = em.createQuery("SELECT u FROM User u WHERE u.phone = :phone", User.class);
+                query.setParameter("phone", phone);
+                user = (User) query.getSingleResult();
+
+            } catch (Exception e) {
+                user = null;
+            }
             if (user.getfName() == null) {
                 throw new PersonNotFoundException("No person with given phone number exist");
             }
@@ -142,11 +147,17 @@ public class UserFacade implements utils.UserFacadeInterface {
         EntityManager em = emf.createEntityManager();
 
         User user = new User(userDTO.userName, userDTO.userPass, userDTO.fName, userDTO.lName, userDTO.phone);
-
+        Address address;
+        Hobby h;
         try {
-            Query q1 = em.createQuery("SELECT a FROM Address a WHERE a.street = :street", Address.class);
-            q1.setParameter("street", userDTO.street);
-            Address address = (Address) q1.getSingleResult();
+
+            try {
+                Query q1 = em.createQuery("SELECT a FROM Address a WHERE a.street = :street", Address.class);
+                q1.setParameter("street", userDTO.street);
+                address = (Address) q1.getSingleResult();
+            } catch (Exception e) {
+                address = null;
+            }
             if (address == null) {
                 address = new Address(userDTO.street);
             }
@@ -159,9 +170,15 @@ public class UserFacade implements utils.UserFacadeInterface {
             address.setCityInfo(cityInfo);
 
             for (HobbyDTO hobby : userDTO.hobbies) {
-                Query q2 = em.createQuery("SELECT h FROM Hobby h WHERE h.name = :hobby", Hobby.class);
-                q2.setParameter("hobby", hobby.name);
-                Hobby h = (Hobby) q2.getSingleResult();
+                try {
+
+                    Query q2 = em.createQuery("SELECT h FROM Hobby h WHERE h.name = :hobby", Hobby.class);
+                    q2.setParameter("hobby", hobby.name);
+                    h = (Hobby) q2.getSingleResult();
+
+                } catch (Exception e) {
+                    h = null;
+                }
                 if (h == null) {
                     h = new Hobby(hobby.name);
                 }
@@ -257,44 +274,36 @@ public class UserFacade implements utils.UserFacadeInterface {
                 throw new PersonNotFoundException("User not found");
             }
 
-            List<HobbyDTO> newList = userDTO.hobbies;
-            List<HobbyDTO> oldList = new ArrayList();
+            List<HobbyDTO> hobbyListDTO = userDTO.hobbies;
 
-            for (Hobby hobby : user.getHobbies()) {
-                oldList.add(new HobbyDTO(hobby));
+            List<Hobby> hobbyList = user.getHobbies();
+
+            for (Hobby hobby : hobbyList) {
+                for (HobbyDTO hobbyDTO : hobbyListDTO) {
+                    if (hobby.getName() == hobbyDTO.name) {
+                        break;
+                    }
+                }
+                hobbyName = hobby.getName();
             }
 
-            Set<HobbyDTO> newHash = new HashSet<HobbyDTO>(newList);
-            Set<HobbyDTO> oldHash = new HashSet<HobbyDTO>(oldList);
-     
-            if(newHash.size() < oldHash.size()){
-            
-                oldHash.removeAll(newHash);
-                oldList = new ArrayList(oldHash);
-                hobbyName = oldList.get(0).name;
+            Query query = em.createQuery("SELECT h FROM Hobby h WHERE h.name = :hobby");
+            query.setParameter("hobby", hobbyName);
+            Hobby hobby = (Hobby) query.getSingleResult();
 
-                Query query = em.createQuery("SELECT h FROM Hobby h WHERE h.name = :hobby");
-                query.setParameter("hobby", hobbyName);
-                Hobby hobby = (Hobby) query.getSingleResult();
+            user.deleteHobbies(hobby);
 
-                user.deleteHobbies(hobby);
+            em.getTransaction().begin();
+            em.merge(user);
 
-                em.getTransaction().begin();
-                em.merge(user);
-                em.getTransaction().commit();
-            }
+            em.getTransaction().commit();
+
             return new UserDTO(user);
-
         } finally {
             em.close();
         }
 
     }
-
-//    @Override
-//    public UserDTO deleteUser(String userName) {
-//        throw 
-//    }
 
     @Override
     public UserDTO deleteUser(String userName) {

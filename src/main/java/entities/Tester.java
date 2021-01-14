@@ -75,20 +75,7 @@ public class Tester {
         
       
         
-        UserFacade facade = new UserFacade();
-        
-        u1.deleteHobbies(gaming);
-       
-        
-        UserDTO userDTO1 = new UserDTO(u1);
-        
-        UserDTO userDTO2 = facade.deleteHobby(userDTO1);
-        
-        
-        for (HobbyDTO hobby : userDTO2.hobbies) {
-            System.out.println(hobby.name);
-        }
-        
+// 
         
     }
 }
