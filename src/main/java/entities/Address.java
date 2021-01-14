@@ -58,7 +58,7 @@ public class Address implements Serializable {
     public void addUsers(User user) {
         if (user != null) {
             this.users.add(user);
-            user.setAdress(this);
+            user.setAddress(this);
         }
     }
 

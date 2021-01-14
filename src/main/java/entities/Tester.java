@@ -45,18 +45,18 @@ public class Tester {
         a2.setCityInfo(c2);
 
         u1.addRole(userRole);
-        u1.setAdress(a1);
+        u1.setAddress(a1);
         u1.addHobbies(tennis);
         u1.addHobbies(fodbold);
         u1.addHobbies(gaming);
         
         
-        u2.setAdress(a2);
+        u2.setAddress(a2);
         u2.addHobbies(fodbold);
         u2.addRole(userRole);
         
         u3.addHobbies(tennis);
-        u3.setAdress(a2);
+        u3.setAddress(a2);
         u3.addRole(userRole);
         
         em.getTransaction().begin();

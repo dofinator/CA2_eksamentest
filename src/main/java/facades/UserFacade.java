@@ -161,7 +161,7 @@ public class UserFacade implements utils.UserFacadeInterface {
             if (address == null) {
                 address = new Address(userDTO.street);
             }
-            user.setAdress(address);
+            user.setAddress(address);
 
             CityInfo cityInfo = em.find(CityInfo.class, userDTO.zip);
             if (cityInfo == null) {
@@ -198,8 +198,10 @@ public class UserFacade implements utils.UserFacadeInterface {
     @Override
     public UserDTO editUser(UserDTO userDTO) throws PersonNotFoundException {
         EntityManager em = emf.createEntityManager();
+        Address address;
         try {
             User user = em.find(User.class, userDTO.userName);
+
             if (user == null) {
                 throw new PersonNotFoundException("Could not find person with given user name");
             }
@@ -207,13 +209,20 @@ public class UserFacade implements utils.UserFacadeInterface {
             user.setlName(userDTO.lName);
             user.setPhone(userDTO.phone);
 
-            Query query = em.createQuery("SELECT a FROM Address a WHERE a.street = :street", Address.class);
-            query.setParameter("street", userDTO.street);
-            Address address = (Address) query.getSingleResult();
+            try {
+
+                Query query = em.createQuery("SELECT a FROM Address a WHERE a.street = :street", Address.class);
+                query.setParameter("street", userDTO.street);
+                address = (Address) query.getSingleResult();
+
+            } catch (Exception e) {
+                address = null;
+            }
+
             if (address == null) {
                 address = new Address(userDTO.street);
             }
-            user.setAdress(address);
+            user.setAddress(address);
 
             CityInfo cityInfo = em.find(CityInfo.class, userDTO.zip);
             if (cityInfo == null) {
@@ -235,7 +244,7 @@ public class UserFacade implements utils.UserFacadeInterface {
     @Override
     public UserDTO addHobby(UserDTO userDTO) throws PersonNotFoundException {
         EntityManager em = emf.createEntityManager();
-
+        Hobby h;
         try {
             User user = em.find(User.class, userDTO.userName);
             if (user == null) {
@@ -244,9 +253,15 @@ public class UserFacade implements utils.UserFacadeInterface {
 
             HobbyDTO hobby = userDTO.hobbies.get(userDTO.hobbies.size() - 1);
 
-            Query q2 = em.createQuery("SELECT h FROM Hobby h WHERE h.name = :hobby", Hobby.class);
-            q2.setParameter("hobby", hobby.name);
-            Hobby h = (Hobby) q2.getSingleResult();
+            try {
+
+                Query q2 = em.createQuery("SELECT h FROM Hobby h WHERE h.name = :hobby", Hobby.class);
+                q2.setParameter("hobby", hobby.name);
+                h = (Hobby) q2.getSingleResult();
+
+            } catch (Exception e) {
+                h = null;
+            }
             if (h == null) {
                 h = new Hobby(hobby.name);
             }
@@ -268,6 +283,7 @@ public class UserFacade implements utils.UserFacadeInterface {
     public UserDTO deleteHobby(UserDTO userDTO) throws PersonNotFoundException {
         EntityManager em = emf.createEntityManager();
         String hobbyName = "";
+        Hobby hobby1;
         try {
             User user = em.find(User.class, userDTO.userName);
             if (user == null) {
@@ -287,11 +303,17 @@ public class UserFacade implements utils.UserFacadeInterface {
                 hobbyName = hobby.getName();
             }
 
-            Query query = em.createQuery("SELECT h FROM Hobby h WHERE h.name = :hobby");
-            query.setParameter("hobby", hobbyName);
-            Hobby hobby = (Hobby) query.getSingleResult();
+            try {
 
-            user.deleteHobbies(hobby);
+                Query query = em.createQuery("SELECT h FROM Hobby h WHERE h.name = :hobby");
+                query.setParameter("hobby", hobbyName);
+                hobby1 = (Hobby) query.getSingleResult();
+
+            } catch (Exception e) {
+                hobby1 = null;
+            }
+
+            user.deleteHobbies(hobby1);
 
             em.getTransaction().begin();
             em.merge(user);

@@ -23,9 +23,9 @@ public class UserDTO {
         this.fName = user.getfName();
         this.lName = user.getlName();
         this.phone = user.getPhone();
-        this.street = user.getAdress().getStreet();
-        this.zip = user.getAdress().getCityInfo().getZip();
-        this.city = user.getAdress().getCityInfo().getCity();
+        this.street = user.getAddress().getStreet();
+        this.zip = user.getAddress().getCityInfo().getZip();
+        this.city = user.getAddress().getCityInfo().getCity();
         this.hobbies = new ArrayList();
         for (Hobby hobby : user.getHobbies()) {
             this.hobbies.add(new HobbyDTO(hobby));
