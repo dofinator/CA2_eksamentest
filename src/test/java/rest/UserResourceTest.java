@@ -77,7 +77,7 @@ public class UserResourceTest {
         h1 = new Hobby("Fodbold");
         h2 = new Hobby("Tennis");
 
-        //Delete existing users and roles to get a "fresh" database
+        //Deleteisting users and roles to get a "fresh" database
 //            em.createQuery("delete from User").executeUpdate();
 //            em.createQuery("delete from Role").executeUpdate();
         Role userRole = new Role("user");
