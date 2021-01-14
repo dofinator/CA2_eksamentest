@@ -5,6 +5,7 @@
  */
 package entities;
 
+import dto.HobbyDTO;
 import dto.UserDTO;
 import errorhandling.PersonNotFoundException;
 import facades.UserFacade;
@@ -29,7 +30,9 @@ public class Tester {
         User u1 = new User("test", "test", "maja", "wegner", "28939740");
         User u2 = new User("test1", "test1", "maja1", "wegner1", "25548745");
         User u3 = new User("test2", "test2", "maja2", "wegner2", "25588745");
-        Hobby h1 = new Hobby("fodbold");
+        Hobby fodbold = new Hobby("fodbold");
+        Hobby tennis = new Hobby("tennis");
+        Hobby gaming = new Hobby("gaming");
         Address a1 = new Address("Slangerupgade 27a");
         Address a2 = new Address("Slangerupgade 27asda");
         Role userRole = new Role("user");
@@ -37,26 +40,29 @@ public class Tester {
         CityInfo c1 = new CityInfo(3400, "Hillerød");
         CityInfo c2 = new CityInfo(3409, "Hillerød");
 
-//        a1.setCityInfo(c1);
-//        a2.setCityInfo(c1);
+        a1.setCityInfo(c1);
+        a2.setCityInfo(c1);
         a2.setCityInfo(c2);
 
-//        u1.addRole(userRole);
-//        u1.setAdress(a1);
-//        u1.addHobbies(h1);
-//        
-//        u2.setAdress(a2);
-//        u2.addHobbies(h1);
-//        u2.addRole(userRole);
-//        
-        u3.addHobbies(h1);
+        u1.addRole(userRole);
+        u1.setAdress(a1);
+        u1.addHobbies(tennis);
+        u1.addHobbies(fodbold);
+        u1.addHobbies(gaming);
+        
+        
+        u2.setAdress(a2);
+        u2.addHobbies(fodbold);
+        u2.addRole(userRole);
+        
+        u3.addHobbies(tennis);
         u3.setAdress(a2);
         u3.addRole(userRole);
         
         em.getTransaction().begin();
         em.persist(userRole);
-//        em.persist(u1);
-//        em.persist(u2);
+        em.persist(u1);
+        em.persist(u2);
         em.persist(u3);
        
         em.getTransaction().commit();
@@ -64,6 +70,12 @@ public class Tester {
         UserDTO userDTO = userFacade.getUserByPhone("28939740");
         
         System.out.println(userDTO.fName);
+        
+        System.out.println("******** TEST DELETE HOBBY *********\n");
+        
+      
+        
+// 
         
     }
 }
