@@ -8,7 +8,9 @@ import entities.Hobby;
 import entities.User;
 import errorhandling.PersonNotFoundException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
@@ -23,7 +25,7 @@ public class UserFacade implements utils.UserFacadeInterface {
     private static EntityManagerFactory emf;
     private static UserFacade instance;
 
-    private UserFacade() {
+    public UserFacade() {
     }
 
     /**
@@ -255,36 +257,44 @@ public class UserFacade implements utils.UserFacadeInterface {
                 throw new PersonNotFoundException("User not found");
             }
 
-            List<HobbyDTO> hobbyListDTO = userDTO.hobbies;
+            List<HobbyDTO> newList = userDTO.hobbies;
+            List<HobbyDTO> oldList = new ArrayList();
 
-            List<Hobby> hobbyList = user.getHobbies();
-
-            for (Hobby hobby : hobbyList) {
-                for (HobbyDTO hobbyDTO : hobbyListDTO) {
-                    if(hobby.getName() == hobbyDTO.name){
-                        break;
-                    }
-                }
-                hobbyName = hobby.getName();
+            for (Hobby hobby : user.getHobbies()) {
+                oldList.add(new HobbyDTO(hobby));
             }
 
-            Query query = em.createQuery("SELECT h FROM Hobby h WHERE h.name = :hobby");
-            query.setParameter("hobby", hobbyName);
-            Hobby hobby = (Hobby) query.getSingleResult();
+            Set<HobbyDTO> newHash = new HashSet<HobbyDTO>(newList);
+            Set<HobbyDTO> oldHash = new HashSet<HobbyDTO>(oldList);
+     
+            if(newHash.size() < oldHash.size()){
+            
+                oldHash.removeAll(newHash);
+                oldList = new ArrayList(oldHash);
+                hobbyName = oldList.get(0).name;
 
-            user.deleteHobbies(hobby);
+                Query query = em.createQuery("SELECT h FROM Hobby h WHERE h.name = :hobby");
+                query.setParameter("hobby", hobbyName);
+                Hobby hobby = (Hobby) query.getSingleResult();
 
-            em.getTransaction().begin();
-            em.merge(user);
+                user.deleteHobbies(hobby);
 
-            em.getTransaction().commit();
-
+                em.getTransaction().begin();
+                em.merge(user);
+                em.getTransaction().commit();
+            }
             return new UserDTO(user);
+
         } finally {
             em.close();
         }
 
     }
+
+//    @Override
+//    public UserDTO deleteUser(String userName) {
+//        throw 
+//    }
 
     @Override
     public UserDTO deleteUser(String userName) {
