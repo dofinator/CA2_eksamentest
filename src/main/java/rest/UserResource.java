@@ -24,6 +24,7 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
@@ -36,7 +37,7 @@ import utils.SetupTestUsers;
  * @author lam@cphbusiness.dk
  */
 @Path("users")
-public class DemoResource {
+public class UserResource {
 
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
     private static final ExecutorService ES = Executors.newCachedThreadPool();
@@ -86,7 +87,7 @@ public class DemoResource {
     @Path("count/{hobby}")
     public String getCountByHobby(@PathParam("hobby") String hobby){
         long count = FACADE.getUserCountByHobby(hobby);
-        return  GSON.toJson(count);
+        return  "{\"count\":" + count + "}";
     }
     
     @GET
@@ -107,6 +108,15 @@ public class DemoResource {
         return Response.ok(u).build();
     }
     
+    @Path("edit/{username}")
+    @PUT
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response editPerson(String user) throws PersonNotFoundException {
+        UserDTO u = GSON.fromJson(user, UserDTO.class);
+        u = FACADE.editUser(u);
+        return Response.ok(u).build();
+    }
     
     
     

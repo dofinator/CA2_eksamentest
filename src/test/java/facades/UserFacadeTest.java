@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.*;
 
 //Uncomment the line below, to temporarily disable this test
 //@Disabled
-public class FacadeTest {
+public class UserFacadeTest {
 
     private static EntityManagerFactory emf;
     private static UserFacade facade;
@@ -45,7 +45,7 @@ public class FacadeTest {
     private static Hobby gaming;
     private static Hobby bordtennis;
 
-    public FacadeTest() {
+    public UserFacadeTest() {
     }
 
     @BeforeAll
@@ -72,6 +72,14 @@ public class FacadeTest {
 //            em.createQuery("delete from User").executeUpdate();
 //            em.createQuery("delete from Role").executeUpdate();
 
+            em.createNativeQuery("DELETE FROM user_roles").executeUpdate();
+            em.createNativeQuery("DELETE FROM roles").executeUpdate();
+            em.createNativeQuery("DELETE FROM HOBBY_users").executeUpdate();
+            em.createNativeQuery("DELETE FROM HOBBY").executeUpdate();
+            em.createNativeQuery("DELETE FROM users").executeUpdate();
+            em.createNativeQuery("DELETE FROM ADDRESS").executeUpdate();
+            em.createNativeQuery("DELETE FROM CITYINFO").executeUpdate();
+
             Role userRole = new Role("user");
             Role adminRole = new Role("admin");
 
@@ -82,12 +90,12 @@ public class FacadeTest {
             user = new User("user", "test1", "fName1", "lName1", "45142241");
             user.addRole(userRole);
             user.addHobbies(fodbold);
-            user.setAdress(a1);
+            user.setAddress(a1);
 
             admin = new User("admin", "test2", "fName2", "lName2", "45874412");
             admin.addRole(adminRole);
             admin.addHobbies(tennis);
-            admin.setAdress(a2);
+            admin.setAddress(a2);
 
             both = new User("both", "test3", "fName3", "lname3", "65887410");
             both.addRole(userRole);
@@ -95,7 +103,7 @@ public class FacadeTest {
             both.addHobbies(fodbold);
             both.addHobbies(gaming);
             both.addHobbies(bordtennis);
-            both.setAdress(a3);
+            both.setAddress(a3);
 
             em.persist(userRole);
             em.persist(adminRole);
@@ -140,7 +148,6 @@ public class FacadeTest {
         assertEquals(expectedfName, u.fName);
     }
 
-    
     @Test
     public void getAllUsersByHobby() {
         List<UserDTO> allUsers = facade.getAllUsersByHobby("Fodbold");
@@ -178,7 +185,7 @@ public class FacadeTest {
         Hobby h = new Hobby("Fodbold");
 
         a.setCityInfo(c);
-        user.setAdress(a);
+        user.setAddress(a);
         user.addHobbies(h);
 
         UserDTO u = facade.createUSer(new UserDTO(user));
@@ -213,7 +220,7 @@ public class FacadeTest {
 
         a.setCityInfo(c);
 
-        user.setAdress(a);
+        user.setAddress(a);
 
         UserDTO userDTO = facade.editUser(new UserDTO(user));
 
@@ -236,9 +243,9 @@ public class FacadeTest {
     public void deleteHobby() throws PersonNotFoundException {
 
         both.deleteHobbies(gaming);
-        
+
         UserDTO userDTO = new UserDTO(both);
-        
+
         UserDTO u = facade.deleteHobby(userDTO);
 
         assertEquals(2, u.hobbies.size());
