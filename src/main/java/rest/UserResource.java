@@ -118,9 +118,12 @@ public class UserResource {
         return Response.ok(u).build();
     }
     
-    
-    
-    
+    @Path("setupusers")
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public void setUpUsers() {
+        SetupTestUsers.setUpUsers();
+    }
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
